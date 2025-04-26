@@ -1,11 +1,12 @@
 #print('Hello, World!')
 import pygame as pg 
 from random import randint
-
+starter = False
 pg.init() 
 
 def get_events():
     global run
+    global starter
     for e in pg.event.get():
         if e.type == pg.QUIT:
             run = False
@@ -18,6 +19,8 @@ def get_events():
                 player_2.speed = -5
             if e.key == pg.K_DOWN:
                 player_2.speed = 5
+            if e.key == pg.K_SPACE:
+                starter = True
         if e.type == pg.KEYUP:
             if e.key == pg.K_w:
                 player_1.speed = 0
@@ -27,6 +30,9 @@ def get_events():
                 player_2.speed = 0
             if e.key == pg.K_DOWN:
                 player_2.speed = 0
+            if e.key == pg.K_SPACE:
+                starter = True
+            
 
 class GameSprite(pg.sprite.Sprite):
     def __init__(self, image, x, y, w, h, speed):
@@ -50,13 +56,13 @@ class Ball(GameSprite):
     def move(self):
         self.rect.x += self.speed_x
         self.rect.y += self.speed_y
-        if self.rect.y <= 0 or self.rect.y >= 500:
+        if self.rect.y <= 0 or self.rect.y >= 600:
             self.speed_y *= -1
         if self.rect.colliderect(player_1.rect) or self.rect.colliderect(player_2.rect):
-            self.speed_x *= -1
+            self.speed_x *= -1.1
 
 
-
+lable2 = pg.font.SysFont('verdana', 45).render('Нажмите на Пробел что бы начать', True, (255,255,255))
 win = pg.display.set_mode((1200,600))
 pg.display.set_caption('PingPong')
 lable = pg.font.SysFont('verdana', 65)
@@ -65,7 +71,7 @@ b = randint(0,255)
 c = randint(0,255)
 count = 0
 f = randint(0,1)
-starter = False
+
 if f == 0:
     f = 5
 else:
@@ -99,12 +105,9 @@ while run:
         if starter:
             ball.move()
             ball.update()
-        for e in pg.event.get():
-            
-            
-            ball.move()
-            ball.update()
-            starter = True
+        else:
+            win.blit(lable2, (250,250))
+        
 
         if ball.rect.x <= -25:
             res = ('Плауер 1 проиграл')
